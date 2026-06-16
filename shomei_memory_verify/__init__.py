@@ -18,5 +18,5 @@ from .receipt import SignedReceipt
 from .receipt_render import render, to_html
 from .verify import VerifyResult, verify_signed_receipt
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __all__ = ["SignedReceipt", "VerifyResult", "verify_signed_receipt", "render", "to_html", "__version__"]

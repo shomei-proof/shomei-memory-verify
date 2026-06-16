@@ -68,12 +68,29 @@ def _closure(b: Mapping[str, Any], established: bool):
         "partial": "PARTIAL — some matched records erased, some still pending",
         "noop_no_match": "NO MATCH — no records were found for this subject",
     }.get(disp, str(disp))
-    verb = "have been erased from" if established else "are ASSERTED (pending the verification above) to have been erased from"
-    certify = (
-        f"The personal records of the subject with pseudonym `{_pid(b.get('subject_pseudonym'))}` {verb} the "
-        f"governed memory store. Of **{b.get('matched_count','?')}** record(s) matched for this subject, "
-        f"**{b.get('erased_count','?')}** were cryptographically erased and **{b.get('deferred_count','?')}** "
-        f"deferred. **Disposition: {human}.** Effective {_ts(b.get('applied_at'))}.")
+    pid = _pid(b.get("subject_pseudonym"))
+    m, e, d = b.get("matched_count", "?"), b.get("erased_count", "?"), b.get("deferred_count", "?")
+    # The opening clause must state ONLY what actually happened — keyed on the real outcome, NOT merely on
+    # whether the signature was attributed. Saying "have been erased" on a no-match / deferred / partial
+    # result would overstate the proof (the integrity rule). The asserted-not-attributed downgrade for an
+    # unpinned receipt composes on top of whichever factual clause applies.
+    asrt = "" if established else "ASSERTED (pending the verification above): "
+    tail = (f"Of **{m}** record(s) matched for this subject, **{e}** were cryptographically erased and "
+            f"**{d}** deferred. **Disposition: {human}.** Effective {_ts(b.get('applied_at'))}.")
+    if disp == "noop_no_match" or m == 0:
+        certify = (f"{asrt}No records matching the subject with pseudonym `{pid}` were found in the governed "
+                   f"memory store, so NOTHING was erased. {tail}")
+    elif disp == "deferred" or (e == 0 and isinstance(d, int) and d > 0):
+        certify = (f"{asrt}The personal records of the subject with pseudonym `{pid}` are DEFERRED (held under "
+                   f"legal hold) in the governed memory store and have NOT yet been erased. {tail}")
+    elif disp == "partial" or (isinstance(e, int) and e > 0 and isinstance(d, int) and d > 0):
+        certify = (f"{asrt}The personal records of the subject with pseudonym `{pid}` were PARTIALLY erased "
+                   f"from the governed memory store — some erased, some still pending. {tail}")
+    else:  # complete — every matched record was erased
+        verb = ("have been erased from" if established else
+                "are ASSERTED (pending the verification above) to have been erased from")
+        certify = (f"The personal records of the subject with pseudonym `{pid}` {verb} the governed memory "
+                   f"store. {tail}")
     basis = [
         "- **Crypto-erasure, not a flag flip:** each record's content was sealed under its own key; erasure "
         "DESTROYS that key, so the ciphertext is permanently undecryptable — including in backups (the "

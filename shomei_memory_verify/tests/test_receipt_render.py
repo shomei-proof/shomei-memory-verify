@@ -56,15 +56,27 @@ def test_invalid_receipt_renders_no_certificate():
 
 
 def test_disposition_language_is_accurate():
-    for disp, must, mustnt in [("deferred", "DEFERRED", "COMPLETE"),
-                               ("partial", "PARTIAL", "every matched record was erased"),
-                               ("noop_no_match", "NO MATCH", "erased")]:
-        r, pk = _mint(_closure(disp=disp, erased=(0 if disp == "noop_no_match" else 50),
-                               deferred=(100 if disp == "deferred" else 0)))
+    # (disposition, matched, erased, deferred, label_that_must_appear) — realistic per-case counts.
+    cases = [("complete", 4, 4, 0, "COMPLETE"),
+             ("partial", 3, 2, 1, "PARTIAL"),
+             ("deferred", 2, 0, 2, "DEFERRED"),
+             ("noop_no_match", 0, 0, 0, "NO MATCH")]
+    FALSE_ERASURE = "have been erased from the governed memory store"   # the certified-erasure lead clause
+    for disp, m, e, d, label in cases:
+        body = {**_closure(disp=disp, erased=e, deferred=d), "matched_count": m, "closed_count": m}
+        r, pk = _mint(body)
         out = render(r, expected_public_key_hex=pk)
-        assert must in out, (disp, must)
+        lead = out.split("**Disposition")[0]          # the opening clause, before the disposition label
+        assert label in out, (disp, label)
+        if disp == "complete":
+            assert FALSE_ERASURE in lead              # complete: stating erasure in the lead is correct
+        else:
+            # partial / deferred / noop: the lead must NOT claim a blanket erasure happened
+            assert FALSE_ERASURE not in lead, (disp, "lead falsely asserts blanket erasure")
+        if disp == "noop_no_match":
+            assert "NOTHING was erased" in lead
         if disp == "deferred":
-            assert "AUTO-FIRES on release" in out
+            assert "have NOT yet been erased" in lead and "AUTO-FIRES on release" in out
 
 
 def test_nonclaims_emitted_verbatim_regardless_of_pin():
