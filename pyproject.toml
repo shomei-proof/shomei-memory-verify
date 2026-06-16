@@ -1,0 +1,38 @@
+# Standalone packaging for the OPEN verifier — the one artifact Shomei publishes.
+# The engine / SDK / prover / trust-network stay proprietary and are NOT built here.
+# Built reproducibly from the canonical ../../shomei_memory_verify leaf via build.sh.
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shomei-memory-verify"
+version = "0.0.1"
+description = "Offline, independent verifier + human-readable renderer for Shomei Memory governance receipts (RTBF / erasure / restriction)."
+readme = "README.md"
+requires-python = ">=3.9"
+# DECISION REQUIRED before first publish: confirm the open-source license.
+# Apache-2.0 is the recommended default for an open verifier (permissive + explicit patent grant).
+license = "Apache-2.0"
+authors = [{ name = "Shomei Labs" }]
+keywords = ["gdpr", "rtbf", "erasure", "data-deletion", "receipt", "verifier", "ed25519", "audit", "compliance"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Legal Industry",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Topic :: Security :: Cryptography",
+]
+# The ONLY third-party dependency. Enforced by tests/test_import_guard.py in the source tree.
+dependencies = ["cryptography>=41"]
+
+[project.scripts]
+shomei-memory-verify = "shomei_memory_verify.__main__:main"
+
+[project.urls]
+Homepage = "https://shomei.ai"
+
+[tool.setuptools]
+# Only the verifier leaf ships. No engine, no tests.
+packages = ["shomei_memory_verify"]

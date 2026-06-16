@@ -1,0 +1,14 @@
+{
+  "body": {
+    "deleted_at": "2026-01-01T00:00:00Z",
+    "key_custody": "kms",
+    "operation": "governed_delete",
+    "schema": "shomei.governed_delete.example.v1",
+    "subject_commitment": "hmac-sha256:abababababababababababababababababababababababababababababababab"
+  },
+  "public_key_hex": "84bcd433d05c0e1c6da1757f5d85c82084ce2ab2cbd7a78feb3be0dbf728ea59",
+  "receipt_hash": "sha256:d77a2aa23d6acb9d7263a6341354af8bee3db677be4364d136d4820176441df4",
+  "schema": "shomei.governed_delete.example.v1",
+  "signature_hex": "30b949a736987bf2307d970577dd280d283e0a18c721e59bba84b8c23112062b89db244720730d7f326875779c6e84c1fdeea76b8f1bfe0f9dee8135267dee07",
+  "signer_id": "shomei-example-signer"
+}
