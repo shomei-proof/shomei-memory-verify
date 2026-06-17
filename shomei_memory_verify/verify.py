@@ -54,7 +54,7 @@ def verify_signed_receipt(
     *,
     expected_public_key_hex: Optional[str] = None,
 ) -> VerifyResult:
-    """Verify a Shomei signed receipt with PUBLIC-key crypto alone — offline, no engine, no secret.
+    """Verify a Shomei signed receipt with public-key crypto alone, offline, using only the public key.
 
     SECURITY — pin the key. A signature only proves authorship relative to a TRUSTED key. Pass
     ``expected_public_key_hex`` (the signer's key, obtained out-of-band) to get an AUTHENTICATED

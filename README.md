@@ -4,21 +4,20 @@
 
 When a Shomei Memory deployment erases a subject's data (GDPR Art. 17 "right to be
 forgotten"), restricts it (Art. 18), or deletes a record, it emits a small, content-free,
-ed25519-signed **receipt**. This package lets *anyone* — a DPO, General Counsel, auditor, or
-the data subject — confirm that receipt on their own machine, using only:
+ed25519-signed **receipt**. This package lets anyone (a DPO, General Counsel, auditor, or the
+data subject) confirm that receipt on their own machine, using only:
 
 1. the receipt file, and
 2. the signer's published public key (obtained out-of-band),
 
 with **no access to the operator's systems** and **no trust in the operator's word**.
 
-## The "open verifier" boundary
+## Small enough to audit yourself
 
-This package is the *proof-checker*, not the *recipe*. It verifies the **structure of a proof**
-— it does **not** contain the production engine (crypto-erasure, predictive decay, the prover) or
-any private/signing key. Its **only** third-party dependency is
-[`cryptography`](https://pypi.org/project/cryptography/); everything else is the Python standard
-library. That minimal, auditable surface is the point: you can read all of it in an afternoon.
+About 700 lines, with a single third-party dependency
+([`cryptography`](https://pypi.org/project/cryptography/)). Everything else is the Python standard
+library. You can read the whole thing in an afternoon and confirm exactly how a receipt is checked:
+an ed25519 signature over canonical JSON, verified offline, with no network calls and no keys.
 
 ## Install
 
@@ -62,8 +61,8 @@ The human-readable statement (`--render`) **never strengthens a claim beyond wha
 established.** Certification language ("VERIFIED ✓", "this certifies…") is emitted only for an
 *authenticated* result. A merely self-consistent (unpinned) receipt is downgraded to an explicit
 "asserted, pending attribution" statement; an invalid receipt renders no certificate at all. The
-explicit non-claims — what the receipt does **not** cover — are always shown verbatim.
+explicit non-claims (what the receipt does **not** cover) are always shown verbatim.
 
 ---
 
-© Shomei Labs. The verifier is open; the Shomei Memory engine and SDK are proprietary.
+© Shomei Labs. https://shomei.ai

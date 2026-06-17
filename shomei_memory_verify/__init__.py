@@ -9,10 +9,9 @@ governed-memory engine.
     assert result.valid                                   # ed25519 signature + receipt_hash both check
     print(result.body["key_custody"])                     # the receipt's own assertions
 
-Design boundary (the "open the proof-checker, not the recipe" cut): this package verifies the
-STRUCTURE of a proof; it never contains the engine's PRODUCTION method (crypto-erasure, decay
-coarsening, the prover) or any private/signing key. It imports ZERO engine code — only
-``cryptography`` — and that invariant is enforced by ``tests/test_import_guard.py``.
+This package verifies a receipt's ed25519 signature over canonical JSON. It imports only
+``cryptography`` plus the standard library (zero engine code), an invariant enforced by
+``tests/test_import_guard.py``. No network, no key material.
 """
 from .receipt import SignedReceipt
 from .receipt_render import render, to_html
